@@ -1,0 +1,52 @@
+.section{
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+.main-heading{
+  color: red;
+}
+.underline{
+  height: 05px;
+  width: 6rem;
+  background-color:orange;
+  margin-top: 10;
+  margin-bottom: 10px;
+
+}
+.service{
+  background-color: cadetblue;
+}
+.footer a{
+  color: #fff;
+  text-decoration: none !important;
+}
+.footer a:hover{
+  color:gray;
+  
+}
+.section{
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+.main-heading{
+  color: red;
+}
+.underline{
+  height: 05px;
+  width: 6rem;
+  background-color:orange;
+  margin-top: 10;
+  margin-bottom: 10px;
+
+}
+.service{
+  background-color: cadetblue;
+}
+.footer a{
+  color: #fff;
+  text-decoration: none !important;
+}
+.footer a:hover{
+  color:gray;
+  
+}
