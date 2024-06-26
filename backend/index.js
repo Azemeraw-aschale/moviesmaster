@@ -1,57 +1,47 @@
-const express = require("express");
+const express = require('express');
 const app = express();
-const cors = require("cors");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const path = require("path");
-// const dotenv = require("dotenv");
-const { PrismaClient } = require("@prisma/client");
-const cloudinary = require('cloudinary').v2;
-const fs = require('fs').promises;
-const mongoose=require("mongoose")
-const dotenv = require("dotenv");
+const cors = require('cors');
+const session = require('express-session');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const cookieParser = require('cookie-parser');
 
 // Load environment variables from .env file
 dotenv.config();
 
 // Use environment variables
 const uri = process.env.MONGODB_URI;
-
-
 const options = {
-  serverSelectionTimeoutMS: 5000 // Adjust the timeout as needed
+  serverSelectionTimeoutMS: 5000,
 };
 
-mongoose.connect(uri, options).then(() => {
-  console.info("connected to the MongoDB");
-}).catch((e) => {
-  console.log("error:", e);
-});
-// });
-// dotenv.config();
-
+app.use(cookieParser());
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-const addChannelRouter = require('./addValue/addMovie');
-const fetchMovieRouter = require('./selectMovie/selectMovie');
-const updateMovieRouter = require('./updateMovie/updateMovie');
-const userAuthRouter = require('./deleteMovie/deleteMovie');
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 
-// Use the routers
-app.use(addChannelRouter);
-app.use(fetchMovieRouter);
-app.use(updateMovieRouter);
-app.use(userAuthRouter);
+// Connect to MongoDB
+mongoose.connect(uri, options)
+  .then(() => {
+    console.info('Connected to the MongoDB');
+  })
+  .catch((e) => {
+    console.log('Error:', e);
+  });
 
-const prisma = new PrismaClient();
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/add',require('./routes/MoviePost'));
+app.use('/api/select',require('./routes/GetMovie'));
+app.use('/api/delete',require('./routes/DeleteMovie'));
+app.use('/api/update',require('./routes/UpdateMovie'));
 
-app.listen(3001, async () => {
-  try {
-    await prisma.$connect();
-    console.log('postgres Database connected successfully');
-  } catch (error) {
-    console.error('Error connecting to the database:', error);
-  }
-  console.log('Server is running on port 3001');
-});
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

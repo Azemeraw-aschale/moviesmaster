@@ -10,6 +10,11 @@ const genreEnum = [
 ];
 
 const movieSchema = new Schema({
+
+  date: {
+    type: Date,
+    default: Date.now
+  },
   title: String,
   director: String,
   releaseYear: Number,
@@ -22,6 +27,7 @@ const movieSchema = new Schema({
   rating: Number,
   plotSummary: String,
   cast: [String] // Assuming cast is an array of strings
+
 });
 
 const Movie = mongoose.model('Movie', movieSchema);

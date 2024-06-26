@@ -10,7 +10,7 @@ const ProfileView = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/api/profileview/13`);
+        const response = await axios.get(`http://localhost:8080/api/profileview/13`);
         setUser(response.data);
       } catch (error) {
         console.error(error);

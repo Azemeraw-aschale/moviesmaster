@@ -1,88 +1,77 @@
-import React, { useEffect, useRef, useState, useContext } from "react";
-
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import Axios from "axios";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  BrowserRouter,
-} from "react-router-dom";
 
 function LoginPage() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-
+  const [email, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  function loginValidation(values) {
+  const loginValidation = (values) => {
     let error = {};
-    if (values.username == "") {
-      error.username = "username should not be empty ";
-    } else if (values.password == "") {
-      error.password = "password can not be empty";
-      console.error();
-    } else {
-      return error;
+    if (values.email === "") {
+      error.email = "email should not be empty";
+    } else if (values.password === "") {
+      error.password = "Password cannot be empty";
     }
-  }
+    return error;
+  };
 
   const handleLogin = async (event) => {
     event.preventDefault();
 
-    const validationErrors = loginValidation({ username, password });
+    const validationErrors = loginValidation({ email, password });
     if (Object.keys(validationErrors).length > 0) {
       // Handle validation errors
       return;
     }
 
-    Axios.post(`http://localhost:3001/login`, {
-      username: username,
-      password: password,
-    })
-      .then((res) => {
-        console.log(res.data.role)
-        if (res.data.token != null) {
-          console.log("the value of data isisis  ", res);
-          navigate("/dashboard");
-        } else if (res.data.token != null && res.data.role == 0) {
-          navigate("/userdashboard");
-        } else {
-          console.log("the value of data isisisis ", res.data);
+    try {
+      const response = await Axios.post(`http://localhost:8080/api/auth/login`, {
+        email: email,
+        password: password,
+      });
 
-          alert("Error Occured");
+      if (response.data.token) {
+        const { role } = response.data;
+        // Save token to localStorage or state management
+        localStorage.setItem("token", response.data.token);
+        // Redirect based on role
+        if (role === 'admin') {
+          navigate("/dashboard");
+        } else {
+          navigate("/userdashboard");
         }
-      })
-      .catch((error) => console.log(error));
+      } else {
+        alert("Error occurred during login");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+    }
   };
 
   return (
-    <div class="flex items-center justify-center h-screen">
-      {/* <Toaster position='top-center' reverseOrder={false}></Toaster> */}
-      <div class=" px-4 py-1 rounded-lg shadow-lg max-w-sm w-full">
-       
-        <h2 class="text-2xl font-semibold text-center mb-4">Login</h2>
-        <p class="text-gray-600 text-center mb-6">Welcome to Cine Hub</p>
-
+    <div className="flex items-center justify-center h-screen">
+      <div className="px-4 py-1 rounded-lg shadow-lg max-w-sm w-full">
+        <h2 className="text-2xl font-semibold text-center mb-4">Login</h2>
+        <p className="text-gray-600 text-center mb-6">Welcome to Cine Hub</p>
         <form className="py-1">
-          <div class="mb-2">
+          <div className="mb-2">
             <input
               type="email"
-              class="form-input w-full px-4 py-2 border rounded-lg text-gray-700 "
+              className="form-input w-full px-4 py-2 border rounded-lg text-gray-700"
               required
-              placeholder="Enter username"
-              value={username}
+              placeholder="Enter email"
+              value={email}
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
-          <div class="mb-2">
+          <div className="mb-2">
             <input
               type="password"
-              class="form-input w-full px-4 py-2 border rounded-lg text-gray-700 "
+              className="form-input w-full px-4 py-2 border rounded-lg text-gray-700"
               required
               placeholder="Enter password"
-              password
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -90,17 +79,17 @@ function LoginPage() {
           <div className="mb-4">
             <button
               type="submit"
-              className="w-full bg-[#293A77] text-white px-4 py-2 rounded-lg font-bold  focus:outline-none"
+              className="w-full bg-[#293A77] text-white px-4 py-2 rounded-lg font-bold focus:outline-none"
               onClick={handleLogin}
             >
               Login
             </button>
           </div>
-          <Link to="/register" style={{textDecoration:'none'}}>
-          <div className="flex justify-between pt-4">
-            <p>Already have an account ?</p> 
-            <button className="bg-[#293A77] p-2 rounded text-light font-bold">SignUp</button>
-          </div>
+          <Link to="/register" style={{ textDecoration: 'none' }}>
+            <div className="flex justify-between pt-4">
+              <p>Don't have an account?</p>
+              <button className="bg-[#293A77] p-2 rounded text-light font-bold">SignUp</button>
+            </div>
           </Link>
         </form>
       </div>

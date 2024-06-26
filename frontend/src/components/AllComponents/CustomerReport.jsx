@@ -40,7 +40,7 @@ const CustomerReport = () => {
 
 // fetching employee list 
   const fetchUsersTotal = () => {
-    Axios.get('http://localhost:3001/totalusers')
+    Axios.get('http://localhost:8080/totalusers')
       .then((response) => {
         setUserstotal(response.data.total_users);
       })

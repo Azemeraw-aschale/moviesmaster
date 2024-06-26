@@ -6,6 +6,7 @@ const fs = require('fs').promises;
 const multer = require('multer');
 const Movie = require('../models/Movie');
 const User = require('../models/User');
+const authMiddleware = require('../middleware/auth');
 
 cloudinary.config({ 
   cloud_name: 'azii', 
@@ -51,7 +52,7 @@ router.put("/update/:movieId", upload.single('image'), async (req, res) => {
 });
 
 // Update user profile
-router.put('/api/profile/:userId', async (req, res) => {
+router.put('/api/profile/:userId',authMiddleware, async (req, res) => {
   const { userId } = req.params;
   const { firstname, lastname, username } = req.body;
 
