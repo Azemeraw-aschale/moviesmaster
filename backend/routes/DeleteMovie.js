@@ -2,12 +2,14 @@ const express = require('express');
 const router = express.Router();
 const { ObjectId } = require('mongoose').Types; // Import ObjectId from mongoose
 const User = require('../models/User');
-const Movie = require('../models/Movie');
+const Movie = require('../models/Movie'); 
+
+// const verifyToken = require('../middleware/auth');
 
 
 
 // Route to delete a movie by ID
-router.delete("/moviedelete/:id", async (req, res) => {
+router.delete("/moviedelete/:id",async (req, res) => {
   const { id } = req.params;
 
   try {

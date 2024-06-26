@@ -31,7 +31,7 @@ const Container = () => {
 
 
  const fetchWar = () => {
-  Axios.get('http://localhost:3001/war')
+  Axios.get('http://localhost:8080/war')
     .then((response) => {
       setWar(response.data);
     })

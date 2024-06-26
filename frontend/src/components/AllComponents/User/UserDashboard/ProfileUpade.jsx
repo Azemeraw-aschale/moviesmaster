@@ -14,7 +14,7 @@ const ProfileUpdate = () => {
     e.preventDefault();
 
     try {
-      await axios.put(`http://localhost:3001/api/profile/13`, {
+      await axios.put(`http://localhost:8080/api/profile/13`, {
         // Replace '1' with the actual user ID
         firstname,
         lastname,

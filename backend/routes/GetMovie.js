@@ -1,15 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const multer = require('multer');
-const cloudinary = require('cloudinary').v2;
-const fs = require('fs').promises;
 const User = require('../models/User');
 const Movie = require('../models/Movie');
 // const connectDB = require('../db');
-const Wishlist = require('../models/AddToWishlist');
-const { verifyToken, permit } = require('../middleware/auth');
+const Wishlist = require('../models/Wishlist');
+const { check, validationResult } = require('express-validator');
+const authMiddleware = require('../middleware/auth');
+
 // connectDB();
 
 // Route to fetch total movies
@@ -87,15 +84,27 @@ router.get("/movielist", async (req, res) => {
   }
 });
 
-router.get("/wishlistview", async (req, res) => {
+router.get("/wishlistview", authMiddleware, async (req, res) => {
   try {
-    const wishlist = await Wishlist.find();
-    res.send(wishlist);
+    // Find the wishlist items for the user
+    const wishlist = await Wishlist.find({
+      items: { $elemMatch: { userId: req.user.id } }
+    }).sort({ 'items.date': -1 });
+
+    if (!wishlist) {
+      return res.status(404).json({ success: false, error: "Wishlist not found" });
+    }
+
+    // Filter out only the items belonging to the user
+    const userWishlistItems = wishlist.map(doc => doc.items.filter(item => item.userId.toString() === req.user.id)).flat();
+
+    res.json(userWishlistItems);
   } catch (err) {
     console.error(err);
     res.status(500).send("Error fetching wishlist");
   }
 });
+
 router.get('/genre-data', async (req, res) => {
   try {
     const genreData = await Movie.aggregate([
@@ -136,5 +145,21 @@ router.get("/genres",async (req, res) => {
     res.status(500).send("Error retrieving genres");
   }
 });
+// router.get('/check_username/:username', async (req, res) => {
+//   const { username } = req.params;
+
+//   try {
+//       const user = await User.findOne({ username });
+//       if (user) {
+//           res.json({ exists: true });
+//       } else {
+//           res.json({ exists: false });
+//       }
+//   } catch (err) {
+//       console.error('Error checking username:', err);
+//       res.status(500).send('Server error');
+//   }
+// });
+
 
 module.exports = router;

@@ -14,7 +14,7 @@ const UserList = () => {
 
 // fetching employee list 
   const fetchEmployees = () => {
-    Axios.get('http://localhost:3001/userlist')
+    Axios.get('http://localhost:8080/userlist')
       .then((response) => {
         setEmployees(response.data);
       })
@@ -26,7 +26,7 @@ const UserList = () => {
     const confirmDelete = window.confirm("Are you sure you want to delete this record?");
   
     if (confirmDelete) {
-      Axios.delete(`http://localhost:3001/delete/${id}`)
+      Axios.delete(`http://localhost:8080/delete/${id}`)
         .then(() => {
           window.alert("Deleted successfully");
           window.alert("User Data deleted successfully")

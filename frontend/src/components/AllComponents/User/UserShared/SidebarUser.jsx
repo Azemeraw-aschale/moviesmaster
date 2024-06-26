@@ -2,58 +2,63 @@ import React, { useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import { MdDashboard, MdMovieCreation, MdSettings } from "react-icons/md";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
   const [isMoviesDropdownOpen, setIsMoviesDropdownOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMoviesDropdown = () => {
     setIsMoviesDropdownOpen(!isMoviesDropdownOpen);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
   return (
-    <div className="bg-[#293A77] text-white h-screen p-6  border-r-slate-500 border-1 shadow-sm"style={{ width: "250px" }}>
+    <div className="bg-[#293A77] text-white h-screen p-6  border-r-slate-500 border-1 shadow-sm" style={{ width: "250px" }}>
       {/* Dashboard */}
       <Link to="/userdashboard" className="no-underline">
         <div className="mb-6 cursor-pointer py-2  rounded hover:bg-blue-900 p-6">
           <a href="#" className="flex items-center text-white text-lg gap-1 no-underline  hover:text-white">
-            <MdDashboard/>
+            <MdDashboard />
             <span className=" hover:text-white">User Dashboard</span>
           </a>
         </div>
       </Link>
-      {/* Report */}
-      
+      {/* Watch Lists */}
       <Link to="/watchlists" className="no-underline">
-      <div className="mb-6 cursor-pointer  hover:bg-blue-900 p-1 hover:rounded">
-      <a href="#" className="flex items-center  text-white text-lg gap-2 no-underline  hover:text-white">
-      <MdMovieCreation/>
+        <div className="mb-6 cursor-pointer  hover:bg-blue-900 p-1 hover:rounded">
+          <a href="#" className="flex items-center  text-white text-lg gap-2 no-underline  hover:text-white">
+            <MdMovieCreation />
             <span>Watch Lists</span>
           </a>
         </div>
       </Link>
-      
-      <Link to="/favorites"  className="no-underline">
-        {/* Add movies */}
+      {/* Favorites */}
+      <Link to="/favorites" className="no-underline">
         <div className="mb-6 cursor-pointer  hover:bg-blue-900 p-1 hover:rounded">
-        <a href="#" className="flex items-center text-white text-lg gap-2 no-underline  hover:text-white">
-        <FaHeart/>
+          <a href="#" className="flex items-center text-white text-lg gap-2 no-underline  hover:text-white">
+            <FaHeart />
             <span>Favorites</span>
           </a>
         </div>
       </Link>
+      {/* Setting */}
       <Link to="/usersettings" className="no-underline">
-        {/* Setting */}
         <div className="mb-6 cursor-pointer hover:bg-blue-900 p-1 hover:rounded">
-        <a href="#" className="flex items-center text-white text-lg gap-2 no-underline  hover:text-white">
-        <MdSettings/>
+          <a href="#" className="flex items-center text-white text-lg gap-2 no-underline  hover:text-white">
+            <MdSettings />
             <span>Setting</span>
           </a>
         </div>
       </Link>
       {/* Logout */}
-      <div className="absolute bottom-6 left-6 cursor-pointer  hover:bg-blue-900 p-1 hover:rounded ">
-      <a href="#" className="flex items-center gap-2 text-red-500 text-lg no-underline  hover:text-white">
-      <svg
+      <div className="absolute bottom-6 left-6 cursor-pointer  hover:bg-blue-900 p-1 hover:rounded " onClick={handleLogout}>
+        <a href="#" className="flex items-center gap-2 text-red-500 text-lg no-underline  hover:text-white">
+          <svg
             className="h-6 w-6 mr-2"
             viewBox="0 0 24 24"
             fill="none"

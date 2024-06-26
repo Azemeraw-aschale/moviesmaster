@@ -2,19 +2,20 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import MyNavbar from "../../MyNavbar";
 import Sidebar from "../UserShared/SidebarUser";
-import { FaHeart } from "react-icons/fa6";
+import { FaHeart } from "react-icons/fa";
 import { IoAdd } from "react-icons/io5";
+import { MdOutlineGeneratingTokens } from "react-icons/md";
 
 const UserDashboard = () => {
-  
   const [movies, setMovies] = useState([]);
   const [selectedGenre, setSelectedGenre] = useState("");
   const [heartStates, setHeartStates] = useState([]);
   const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [message, setMessage] = useState(null);  // State to hold success/error message
 
   const fetchMovieList = () => {
     axios
-      .get("http://localhost:3001/movielist")
+      .get("http://localhost:8080/api/select/movielist")
       .then((response) => {
         setMovies(response.data);
         setHeartStates(response.data.map(() => false));
@@ -42,17 +43,26 @@ const UserDashboard = () => {
 
   const addToWishlist = (movieId) => {
     setWishlistLoading(true);
+  
+    const token = localStorage.getItem("token"); // Get the token from localStorage
+    console.log("totktkttktk", token);
+  
     axios
-      .post(`http://localhost:3001/add-to-wishlist/${movieId}`)
+      .post(`http://localhost:8080/api/add/add-to-wishlist/${movieId}`, {}, {
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": token,
+        },
+      })
       .then((response) => {
         console.log("Movie added to wishlist:", response.data);
         setWishlistLoading(false);
-        // Handle success (e.g., show a success message)
+        setMessage({ type: "success", text: "Movie added to wishlist successfully!" });
       })
       .catch((error) => {
         console.error("Error adding movie to wishlist:", error);
         setWishlistLoading(false);
-        // Handle error (e.g., show an error message)
+        setMessage({ type: "error", text: "Error adding movie to wishlist." });
       });
   };
 
@@ -96,6 +106,11 @@ const UserDashboard = () => {
           <div>
             <h1>{selectedGenre || "All Movies"}</h1>
           </div>
+          {message && (
+            <div className={`alert ${message.type === "success" ? "alert-success" : "alert-danger"}`}>
+              {message.text}
+            </div>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-white justify-center align-middle">
             {filteredMovies.map((movie, index) => (
               <div className="rounded-lg shadow-md p-1" key={index}>
@@ -105,7 +120,7 @@ const UserDashboard = () => {
                     <h6 className="text-12">{movie.title}</h6>
                   </div>{" "}
                 </div>
-                <img src={movie.image} className="h-[250px] w-full p-2" />
+                <img src={movie.image} className="h-[250px] w-full p-2" alt={movie.title} />
                 <div className="flex flex-col">
                   <div className="flex gap-3">
                     {" "}
